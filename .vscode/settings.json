@@ -1,0 +1,8 @@
+{
+    "python.pythonPath": "C:\\cz\\Anaconda3\\envs\\DeepLearning\\python.exe",
+    "python.formatting.provider": "yapf",
+    "python.formatting.yapfArgs": ["--style", "{column_limit:120}"], 
+
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": ["--max-line-length=120"],
+}
