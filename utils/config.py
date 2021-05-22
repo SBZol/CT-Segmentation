@@ -18,15 +18,15 @@ __C = edict()
 cfg = __C
 
 __C.DATA = edict()
-__C.DATA.ori_imgs_path = os.path.join('C:\\', 'cz', 'Project', 'wb_data', 'images')
-__C.DATA.imgs_3d_path = os.path.join('C:\\', 'cz', 'Project', 'wb_data', 'dio_data', 'imgs_3d')
-__C.DATA.mask_3d_path = os.path.join('C:\\', 'cz', 'Project', 'wb_data', 'dio_data', 'mask_3d')
-__C.DATA.imgs_2d_path = os.path.join('C:\\', 'cz', 'Project', 'wb_data', 'dio_data', 'imgs_2d')
-__C.DATA.mask_2d_path = os.path.join('C:\\', 'cz', 'Project', 'wb_data', 'dio_data', 'mask_2d')
+__C.DATA.ori_data_path = os.path.join('C:\\', 'cz', 'Project', 'Data', 'Enhance_CT')
+__C.DATA.imgs_2d_path = os.path.join('C:\\', 'cz', 'Project', 'Data', 'training_data', 'imgs_2d')
+__C.DATA.mask_2d_path = os.path.join('C:\\', 'cz', 'Project', 'Data', 'training_data', 'mask_2d')
 
+__C.NET = edict()
 __C.NET.input_channel = 1
 __C.NET.classes = 3
 
+__C.TRAINING = edict()
 __C.TRAINING.checkpoint_path = os.path.join('C:\\', 'cz', 'Project', 'wb_data', 'dio_data')
 __C.TRAINING.epoch = 10
 __C.TRAINING.batch_size = 64

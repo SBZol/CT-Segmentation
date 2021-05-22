@@ -12,6 +12,7 @@
 
 # here put the import lib
 import os
+import random
 from glob import glob
 
 from torch.utils.data import Dataset
@@ -31,8 +32,9 @@ class BasicDataset2D(Dataset):
         if not self._check_exists():
             raise RuntimeError('Dataset not found.')
 
-        self.img_list = sorted(glob(img_root + "*.npy"))
-        self.mask_list = sorted(glob(mask_root + "*.npy"))
+        self.img_list = glob(os.path.join(img_root, '*'))
+        random.shuffle(self.img_list)
+        self.mask_root = mask_root
 
         self.img_transform = img_transform
         self.mask_transform = mask_transform
@@ -45,12 +47,13 @@ class BasicDataset2D(Dataset):
         Returns:
             tuple: (image, target) where target is index of the target class.
         """
-        img_file, = self.img_list[index]  # filename
-        mask_file = self.mask_list[index]
-        img = np.load(img_file)  # mhd file
-        mask = np.load(mask_file)
-        img = np.float32(img)
-        mask = np.float32(mask)
+        img_path = self.img_list[index]
+        data_id = os.path.split(img_path)[-1]
+
+        mask_path = os.path.join(self.mask_root, data_id)
+
+        img = np.load(img_path).astype(np.float32)
+        mask = np.load(mask_path).astype(np.float32)
 
         if self.img_transform is not None:
             img = self.img_transform(img)
@@ -68,8 +71,11 @@ class BasicDataset2D(Dataset):
 
 
 if __name__ == '__main__':
-    dir_img = "/public/home/leedan/kidney_segmentation/kidney_train/kidney_img2D/"
-    dir_mask = "/public/home/leedan/kidney_segmentation/kidney_train/kidney_mask2D/"
+    # test code
+    from config import cfg
+
+    dir_img = cfg.DATA.imgs_2d_path
+    dir_mask = cfg.DATA.mask_2d_path
     trans = transforms.Compose([transforms.ToTensor(), transforms.Resize((512, 512))])
     Ds = BasicDataset2D(dir_img, dir_mask, trans, trans)
     a, b = Ds[0]

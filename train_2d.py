@@ -31,16 +31,16 @@ class train_2d:
         self.net = net
         self.device = device
 
-        self.imgs_path = config.imgs_path
-        self.mask_path = config.mask_path
+        self.imgs_path = config.DATA.imgs_2d_path
+        self.mask_path = config.DATA.mask_2d_path
 
-        self.classes = config.classes
-        self.input_channel = config.input_channel
-        self.epoch = config.epoch
-        self.batch_size = config.batch_size
-        self.batch_size_val = config.batch_size_val
-        self.lr = config.lr
-        self.val_percent = config.val_percent
+        self.classes = config.NET.classes
+        self.input_channel = config.NET.input_channel
+        self.epoch = config.TRAINING.epoch
+        self.batch_size = config.TRAINING.batch_size
+        self.batch_size_val = config.TRAINING.batch_size_val
+        self.lr = config.TRAINING.lr
+        self.val_percent = config.TRAINING.val_percent
 
         self.save_cp = save_cp
 
