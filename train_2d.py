@@ -19,24 +19,25 @@ from torch.utils.data import DataLoader, random_split
 import torch.optim as optim
 from torchvision import transforms
 from tqdm import tqdm
-import segmentation_models_pytorch as smp
 import matplotlib.pyplot as plt
 
 from utils.dataset import BasicDataset2D
 from utils.config import cfg
+from networks.u_net import get_unet
 
 
 class train_2d:
     def __init__(self, net, device, config, save_cp=True):
         self.net = net
         self.device = device
+        self.net.to(self.device)
 
-        self.imgs_path = config.DATA.imgs_2d_path
-        self.mask_path = config.DATA.mask_2d_path
+        self.imgs_path = config.DATA.imgs_2d_train
+        self.mask_path = config.DATA.mask_2d_train
 
         self.classes = config.NET.classes
         self.input_channel = config.NET.input_channel
-        self.epoch = config.TRAINING.epoch
+        self.epochs = config.TRAINING.epochs
         self.batch_size = config.TRAINING.batch_size
         self.batch_size_val = config.TRAINING.batch_size_val
         self.lr = config.TRAINING.lr
@@ -48,7 +49,7 @@ class train_2d:
         self.epochs_loss = list()
 
     def train(self):
-        trans = transforms.Compose([transforms.ToTensor, transforms.Resize((512, 512))])
+        trans = transforms.Compose([transforms.ToTensor(), transforms.Resize((512, 512))])
         dataset = BasicDataset2D(self.imgs_path, self.mask_path, trans, trans)
 
         n_val = int(len(dataset) * self.val_percent)
@@ -73,7 +74,7 @@ class train_2d:
             Device:          {self.device.type}
         ''')
 
-        optimizer = optim.Adam(self.net.parameters(), lr=self.lr, weight_decay=1e-8, momentum=0.9)
+        optimizer = optim.RMSprop(self.net.parameters(), lr=self.lr, weight_decay=1e-8, momentum=0.9)
         # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min' if self.classes > 1 else 'max', patience=2)
 
         if self.classes > 1:
@@ -150,14 +151,8 @@ class train_2d:
 
 
 if __name__ == '__main__':
-    unet = smp.Unet(
-        encoder_name="resnet34",  # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
-        encoder_weights="imagenet",  # use `imagenet` pretrained weights for encoder initialization
-        in_channels=cfg.NET.input_channel,  # model input channels (1 for grayscale images, 3 for RGB, etc.)
-        classes=cfg.NET.classes,  # model output channels (number of classes in your dataset)
-    )
-
+    unet = get_unet(cfg.NET.input_channel, cfg.NET.classes)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
 
-    trainning_obj = train_2d(unet, device, cfg, save_cp=True)
+    trainning_obj = train_2d(unet, device, cfg, save_cp=True).train()

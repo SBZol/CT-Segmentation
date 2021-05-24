@@ -74,8 +74,8 @@ if __name__ == '__main__':
     # test code
     from config import cfg
 
-    dir_img = cfg.DATA.imgs_2d_path
-    dir_mask = cfg.DATA.mask_2d_path
+    dir_img = cfg.DATA.imgs_2d_train
+    dir_mask = cfg.DATA.mask_2d_train
     trans = transforms.Compose([transforms.ToTensor(), transforms.Resize((512, 512))])
     Ds = BasicDataset2D(dir_img, dir_mask, trans, trans)
     a, b = Ds[0]
