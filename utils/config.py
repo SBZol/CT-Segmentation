@@ -18,11 +18,13 @@ __C = edict()
 cfg = __C
 
 __C.DATA = edict()
-__C.DATA.ori_data_path = os.path.join('C:\\', 'cz', 'Project', 'Data', 'Enhance_CT')
-__C.DATA.imgs_2d_train = os.path.join('C:\\', 'cz', 'Project', 'Data', 'training_data', 'imgs_2d')
-__C.DATA.mask_2d_train = os.path.join('C:\\', 'cz', 'Project', 'Data', 'training_data', 'mask_2d')
-__C.DATA.mask_2d_test = os.path.join('C:\\', 'cz', 'Project', 'Data', 'training_data', 'mask_2d')
-__C.DATA.mask_2d_test = os.path.join('C:\\', 'cz', 'Project', 'Data', 'training_data', 'mask_2d')
+__C.DATA.root_path = os.path.join('/home', 'chenzhou', 'Kidney')
+__C.DATA.ori_train_data = os.path.join(__C.DATA.root_path, 'Kidney_CT')
+__C.DATA.ori_test_data = os.path.join(__C.DATA.root_path, 'Kidney_CT_test')
+__C.DATA.imgs_2d_train = os.path.join(__C.DATA.root_path, 'processed_data', 'imgs_2d_train')
+__C.DATA.mask_2d_train = os.path.join(__C.DATA.root_path, 'processed_data', 'mask_2d_train')
+__C.DATA.mask_2d_test = os.path.join(__C.DATA.root_path, 'processed_data', 'imgs_2d_test')
+__C.DATA.mask_2d_test = os.path.join(__C.DATA.root_path, 'processed_data', 'mask_2d_test')
 
 __C.NET = edict()
 __C.NET.input_channel = 1
@@ -30,7 +32,7 @@ __C.NET.classes = 6
 
 __C.TRAINING = edict()
 __C.TRAINING.create_data = False
-__C.TRAINING.checkpoint_path = os.path.join('C:\\', 'cz', 'Project', 'wb_data', 'dio_data')
+__C.TRAINING.checkpoint_path = os.path.join(__C.DATA.root_path, )
 __C.TRAINING.epochs = 10
 __C.TRAINING.batch_size = 1
 __C.TRAINING.batch_size_val = 4

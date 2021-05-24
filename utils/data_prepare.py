@@ -65,7 +65,7 @@ class data_processer:
                 print(e)
                 print(str(path))
 
-    def check_mask(self, claases):
+    def check_mask(self, classes):
         classes_count = []
         for i in range(classes):
             classes_count.append(.0)
@@ -79,7 +79,7 @@ class data_processer:
 
             uni = np.unique(mask_arr)
 
-            if max(uni) > claases - 1 or min(uni) < 0:
+            if max(uni) > classes - 1 or min(uni) < 0:
                 print('---error  data----------------------------' + mask_path + str(uni))
             else:
                 for n in uni:
@@ -90,12 +90,34 @@ class data_processer:
 if __name__ == '__main__':
     # test code
     from config import cfg
+    import shutil
 
-    ori_data_path = cfg.DATA.ori_data_path
+    ori_train_data = cfg.DATA.ori_train_data
     imgs_2d_train = cfg.DATA.imgs_2d_train
     mask_2d_train = cfg.DATA.mask_2d_train
+
     classes = cfg.NET.classes
 
-    processor = data_processer(ori_data_path)
-    processor.check_mask(6)
-    # processor.transform_to_2D(imgs_2d_train, mask_2d_train)
+    processor = data_processer(ori_train_data)
+    # processor.check_mask(6)
+    processor.transform_to_2D(imgs_2d_train, mask_2d_train)
+
+    # ---don't remove
+    # imgs_path = os.path.join(ori_train_data, 'kidney_imgs_test')
+    # mask_path = os.path.join(ori_train_data, 'kidney_mask_test')
+    # imgs_list = os.listdir(imgs_path)
+    # mask_list = os.listdir(mask_path)
+
+    # for f in imgs_list:
+    #     id_name = str(f).split('.nii.gz')[0]
+
+    #     if f in mask_list:
+    #         new_dir = os.path.join(ori_train_data, 'Kidney_CT_test', id_name)
+    #         if not os.path.exists(new_dir):
+    #             os.mkdir(new_dir)
+    #         imgs_f = os.path.join(imgs_path, f)
+    #         mask_f = os.path.join(mask_path, f)
+    #         new_imgs_f = os.path.join(new_dir, id_name + '_image.nii.gz')
+    #         new_mask_f = os.path.join(new_dir, id_name + '_mask.nii.gz')
+    #         shutil.copy(imgs_f, new_imgs_f)
+    #         shutil.copy(mask_f, new_mask_f)
