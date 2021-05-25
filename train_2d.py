@@ -42,6 +42,7 @@ class train_2d:
         self.batch_size_val = config.TRAINING.batch_size_val
         self.lr = config.TRAINING.lr
         self.val_percent = config.TRAINING.val_percent
+        self.weight_path = config.TRAINING.weight_path
 
         self.save_cp = save_cp
 
@@ -57,12 +58,7 @@ class train_2d:
         train, val = random_split(dataset, [n_train, n_val])
 
         train_loader = DataLoader(train, batch_size=self.batch_size, shuffle=True, num_workers=4, pin_memory=True)
-        # val_loader = DataLoader(val,
-        #                         batch_size=self.batch_size_val,
-        #                         shuffle=False,
-        #                         num_workers=4,
-        #                         pin_memory=True,
-        #                         drop_last=True)
+
         global_step = 0
         logging.info(f'''Starting training:
             Epochs:          {self.epochs}
@@ -75,7 +71,6 @@ class train_2d:
         ''')
 
         optimizer = optim.RMSprop(self.net.parameters(), lr=self.lr, weight_decay=1e-8, momentum=0.9)
-        # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min' if self.classes > 1 else 'max', patience=2)
 
         if self.classes > 1:
             criterion = torch.nn.CrossEntropyLoss()
@@ -99,7 +94,7 @@ class train_2d:
                     mask_type = torch.float32 if self.classes == 1 else torch.long
                     true_masks = true_masks.to(device=self.device, dtype=mask_type)
                     masks_pred = self.net(imgs)
-                    # masks_pred = torch.argmax(masks_pred, dim=0)
+
                     loss = criterion(masks_pred, true_masks)
                     epoch_loss += loss.item()
 
@@ -115,26 +110,15 @@ class train_2d:
                     pbar.update(imgs.shape[0])
                     global_step += 1
 
-                    # if global_step % (n_train // (10 * batch_size)) == 0:
-                    #     val_score = eval_net_2(net, val_loader, device)
-                    #
-                    #     scheduler.step(val_score)
-                    #
-                    #     print('Validation mean IoU: {}'.format(val_score))
-                    #     if config['classes'] > 1:
-                    #         print('Validation cross entropy: {}'.format(val_score))
-                    #     else:
-                    #         print('Validation Dice Coeff: {}'.format(val_score))
-
             print(f'epoch loss:{epoch_loss/n_train}')
 
             if self.save_cp:
                 try:
-                    os.mkdir(self.dir_checkpoint)
+                    os.mkdir(self.weight_path)
                     logging.info('Created checkpoint directory')
                 except OSError:
                     pass
-                torch.save(self.net.state_dict(), self.dir_checkpoint + f'CP_epoch{epoch + 1}.pth')
+                torch.save(self.net.state_dict(), os.path.join(self.weight_path, f'CP_epoch{epoch + 1}.pth'))
 
             # loss曲线
             if epoch == 1:
